@@ -16,9 +16,9 @@ class Timer {
   start = () => {
     // cut the 1 second delay that occurs because setInterval waits its interval before calling its callback
     this.tick();
-    this.interval = setInterval(this.tick, 1000); // call tick every 1 second
+    this.interval = setInterval(this.tick, 20); // call tick every 50 ms
     if (this.onStart) {
-      this.onStart();
+      this.onStart(this.timeRemaining);
     }
   };
 
@@ -33,9 +33,9 @@ class Timer {
         this.onComplete();
       }
     } else {
-      this.timeRemaining = this.timeRemaining - 1;
+      this.timeRemaining = this.timeRemaining - 0.02;
       if (this.onTick) {
-        this.onTick();
+        this.onTick(this.timeRemaining);
       }
     }
   };
@@ -45,6 +45,6 @@ class Timer {
   }
 
   set timeRemaining(time) {
-    this.durationInput.value = time;
+    this.durationInput.value = time.toFixed(2);
   }
 }
