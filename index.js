@@ -1,8 +1,13 @@
 class Timer {
-  constructor(durationInput, startButton, pauseButton) {
+  constructor(durationInput, startButton, pauseButton, callbacks) {
     this.durationInput = durationInput;
     this.startButton = startButton;
     this.pauseButton = pauseButton;
+    if (callbacks) {
+      this.onStart = callbacks.onStart;
+      this.onTick = callbacks.onTick;
+      this.onComplete = callbacks.onComplete;
+    }
 
     this.startButton.addEventListener("click", this.start);
     this.pauseButton.addEventListener("click", this.pause);
@@ -12,6 +17,9 @@ class Timer {
     // cut the 1 second delay that occurs because setInterval waits its interval before calling its callback
     this.tick();
     this.interval = setInterval(this.tick, 1000); // call tick every 1 second
+    if (this.onStart) {
+      this.onStart();
+    }
   };
 
   pause = () => {
@@ -21,8 +29,14 @@ class Timer {
   tick = () => {
     if (this.timeRemaining <= 0) {
       this.pause();
+      if (this.onComplete) {
+        this.onComplete();
+      }
     } else {
       this.timeRemaining = this.timeRemaining - 1;
+      if (this.onTick) {
+        this.onTick();
+      }
     }
   };
 
@@ -39,4 +53,14 @@ const durationInput = document.querySelector("#duration");
 const startButton = document.querySelector("#start");
 const pauseButton = document.querySelector("#pause");
 
-const timer = new Timer(durationInput, startButton, pauseButton);
+const timer = new Timer(durationInput, startButton, pauseButton, {
+  onStart() {
+    console.log("timer started");
+  },
+  onTick() {
+    console.log("timer just ticked down");
+  },
+  onComplete() {
+    console.log("timer is completed");
+  },
+});
